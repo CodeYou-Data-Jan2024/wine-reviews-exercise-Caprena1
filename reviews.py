@@ -2,16 +2,24 @@ import pandas as pd
 
 reviews = pd.read_csv('data/winemag-data-130k-v2.csv', index_col=0)
 
-#count = reviews.rename(columns={'description' : 'count'}).sum()
+dict = {'variety': 'count', 'points': 'mean'}
 
-counts = reviews[['country']].value_counts()#.rename(columns={'description' : 'count'}).sum()
+new = reviews.groupby('country').aggregate(dict).sort_values(by='variety', ascending=False)
 
-counts_reviews = counts.to_frame().reset_index()
-counts_reviews.columns = ['country', 'count']
-#points = counts_reviews.groupby(['country', 'count', 'points'])
+new = pd.DataFrame(new).rename(columns={'variety': 'count'})
 
-#counts_reviews = points.iloc['points']
+new['points'] = new['points'].round(1)
 
+print(new)
 
-print(counts_reviews)
+new.to_csv('data/reviews-per-country.csv')
+
+#counts = reviews[['country', 'points']].value_counts()
+
+#counts_reviews = counts.to_frame().reset_index()
+#counts_reviews.columns = ['country', 'count', 'points']
+#average_points = reviews[['points']].mean(axis=1)
+
+#print(counts_reviews, average_points)
+
 
